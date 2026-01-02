@@ -341,6 +341,7 @@ export interface WhatsAppWebhookMessage {
         button_reply?: { id: string; title: string };
         list_reply?: { id: string; title: string; description: string };
     };
+    audio?: { id: string; mime_type: string };
 }
 
 export interface WhatsAppWebhookPayload {
@@ -382,6 +383,7 @@ export function parseWhatsAppWebhook(payload: WhatsAppWebhookPayload): {
         timestamp: Date;
         type: string;
         buttonId?: string;
+        audioId?: string;
     }>;
     statuses: Array<{
         messageId: string;
@@ -397,6 +399,7 @@ export function parseWhatsAppWebhook(payload: WhatsAppWebhookPayload): {
             timestamp: Date;
             type: string;
             buttonId?: string;
+            audioId?: string;
         }>,
         statuses: [] as Array<{
             messageId: string;
@@ -416,6 +419,7 @@ export function parseWhatsAppWebhook(payload: WhatsAppWebhookPayload): {
 
                     let text = '';
                     let buttonId: string | undefined;
+                    let audioId: string | undefined;
 
                     if (msg.type === 'text' && msg.text) {
                         text = msg.text.body;
@@ -430,6 +434,10 @@ export function parseWhatsAppWebhook(payload: WhatsAppWebhookPayload): {
                             text = msg.interactive.list_reply.title;
                             buttonId = msg.interactive.list_reply.id;
                         }
+                    } else if (msg.type === 'audio' && msg.audio) {
+                        // Audio message - needs transcription
+                        audioId = msg.audio.id;
+                        text = '[Audio message - pending transcription]';
                     }
 
                     result.messages.push({
@@ -439,6 +447,7 @@ export function parseWhatsAppWebhook(payload: WhatsAppWebhookPayload): {
                         timestamp: new Date(parseInt(msg.timestamp) * 1000),
                         type: msg.type,
                         buttonId,
+                        audioId,
                     });
                 }
             }

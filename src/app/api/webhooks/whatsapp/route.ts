@@ -26,6 +26,7 @@ import {
     SCORE_CHANGES
 } from '@/ai/agents/scheduling-agent';
 import { addLeadToFirestore, getLeadsFromFirestore, updateLeadInFirestore } from '@/lib/firestoreService';
+import { transcribeWhatsAppAudio } from '@/lib/audioTranscriber';
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || 'gravita_sniper_crm';
 
@@ -67,7 +68,29 @@ export async function POST(request: NextRequest) {
 
         // Process each incoming message
         for (const msg of messages) {
-            console.log('📱 WhatsApp:', msg.fromName, '-', msg.text.substring(0, 50));
+            // Handle audio messages - transcribe first
+            let messageText = msg.text;
+
+            if (msg.type === 'audio' && msg.audioId) {
+                console.log('🎤 Audio recibido de:', msg.fromName);
+
+                const transcriptionResult = await transcribeWhatsAppAudio(msg.audioId);
+
+                if (transcriptionResult.success && transcriptionResult.text) {
+                    messageText = transcriptionResult.text;
+                    console.log('✅ Audio transcrito:', messageText.substring(0, 100));
+                } else {
+                    console.error('❌ Error transcribiendo audio:', transcriptionResult.error);
+                    // Send acknowledgment that we received audio but couldn't transcribe
+                    await sendWhatsAppMessage(
+                        msg.from,
+                        '🎤 Recibí tu mensaje de voz. ¿Podrías escribirme para poder ayudarte mejor?'
+                    );
+                    continue; // Skip this message
+                }
+            }
+
+            console.log('📱 WhatsApp:', msg.fromName, '-', messageText.substring(0, 50));
 
             // Mark as read immediately
             await markMessageAsRead(msg.from);
@@ -78,7 +101,7 @@ export async function POST(request: NextRequest) {
             // Add incoming message to history
             history.push({
                 role: 'user',
-                content: msg.text,
+                content: messageText,
                 timestamp: new Date(),
             });
 

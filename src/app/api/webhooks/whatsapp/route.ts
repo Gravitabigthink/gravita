@@ -118,18 +118,18 @@ export async function POST(request: NextRequest) {
 
             // Check if lead has a pending appointment
             const hasAppointment = lead?.status === 'agendado' ||
-                (lead as Record<string, unknown>)?.appointmentDate;
+                (lead as unknown as Record<string, unknown>)?.appointmentDate;
 
             if (hasAppointment && lead) {
                 // Use Scheduling Agent for leads with appointments
                 console.log('📅 Using Scheduling Agent for:', lead.name);
 
-                const appointmentDate = (lead as Record<string, unknown>)?.appointmentDate
-                    ? new Date((lead as Record<string, unknown>).appointmentDate as string)
+                const appointmentDate = (lead as unknown as Record<string, unknown>)?.appointmentDate
+                    ? new Date((lead as unknown as Record<string, unknown>).appointmentDate as string)
                     : new Date();
 
                 const context: AppointmentContext = {
-                    leadId: lead.id,
+                    leadId: lead.id || '',
                     leadName: lead.name,
                     leadPhone: msg.from,
                     appointmentDate,
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
                         name: lead?.name || msg.fromName || 'Cliente',
                         phone: msg.from,
                         email: lead?.email,
-                        company: (lead as Record<string, unknown>)?.company as string | undefined,
+                        company: (lead as unknown as Record<string, unknown>)?.company as string | undefined,
                         source: lead?.source,
                         score: lead?.score,
                         notes: lead?.notes,

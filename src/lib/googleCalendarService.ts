@@ -39,7 +39,10 @@ export async function handleGoogleCallback(code: string): Promise<boolean> {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         oauth2Client.setCredentials(tokens);
-        userTokens = tokens;
+        userTokens = {
+            access_token: tokens.access_token ?? undefined,
+            refresh_token: tokens.refresh_token ?? undefined,
+        };
         return true;
     } catch (error) {
         console.error('Error getting Google tokens:', error);

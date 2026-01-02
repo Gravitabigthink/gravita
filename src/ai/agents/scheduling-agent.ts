@@ -8,7 +8,7 @@
  * - Manejar pre-calls de calentamiento
  */
 
-import { routeToLLM, LLMRequest } from '@/lib/llmRouter';
+import { routeToLLM } from '@/lib/llm-router';
 import { sendWhatsAppMessage, isWhatsAppConfigured } from '@/lib/whatsappService';
 import { createGoogleCalendarEvent, isGoogleCalendarConnected } from '@/lib/googleCalendarService';
 
@@ -211,7 +211,7 @@ async function generatePreCallResponse(
     context: AppointmentContext,
     question: string
 ): Promise<string> {
-    const systemPrompt = `Eres el asistente de Gravita, agencia de marketing digital.
+    const prompt = `Eres el asistente de Gravita, agencia de marketing digital.
     
 El cliente ${context.leadName} tiene una cita agendada para ${context.appointmentTime}.
 
@@ -221,29 +221,20 @@ REGLAS:
 - Máximo 3-4 oraciones
 - Mantén el enfoque en que asista a la videollamada
 - Sé amigable pero profesional
-- No inventes servicios ni precios`;
+- No inventes servicios ni precios
 
-    const request: LLMRequest = {
-        messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: question },
-        ],
-        system: systemPrompt,
-        temperature: 0.7,
-        maxTokens: 200,
-    };
+PREGUNTA DEL CLIENTE: ${question}`;
 
-    const result = await routeToLLM(request);
-
-    if (result.success && result.content) {
+    try {
+        const result = await routeToLLM(prompt, { taskType: 'quick-response' });
         return result.content;
-    }
-
-    return `¡Buena pregunta! 😊
+    } catch {
+        return `¡Buena pregunta! 😊
 
 Todo eso lo veremos en detalle durante la videollamada. Ahí podremos personalizar la estrategia según tu negocio.
 
 ¿Confirmamos la cita? ✅`;
+    }
 }
 
 /**

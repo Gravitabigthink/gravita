@@ -12,7 +12,7 @@
  * - No ofrece cosas fuera del catálogo
  */
 
-import { routeToLLM, LLMRequest } from '@/lib/llmRouter';
+import { routeToLLM } from '@/lib/llm-router';
 
 // Servicios que ofrece Gravita (solo estos, nada más)
 const GRAVITA_SERVICES = {
@@ -120,26 +120,16 @@ ${incomingMessage}
 
 Responde de forma natural, amigable y enfocada en agendar la videollamada. Si ya aceptó agendar, confirma y di que le envías el link.`;
 
-    const request: LLMRequest = {
-        messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: incomingMessage },
-        ],
-        system: systemPrompt,
-        temperature: 0.7,
-        maxTokens: 300,
-    };
-
-    const llmResponse = await routeToLLM(request);
-
-    if (!llmResponse.success || !llmResponse.content) {
+    let response: string;
+    try {
+        const llmResponse = await routeToLLM(systemPrompt, { taskType: 'chat-assistant' });
+        response = llmResponse.content;
+    } catch {
         return {
             response: '¡Hola! Gracias por escribirnos. En un momento te atendemos. 🙌',
             suggestedAction: 'continue',
         };
     }
-
-    const response = llmResponse.content;
 
     // Detect if ready to schedule
     const lowerResponse = response.toLowerCase();

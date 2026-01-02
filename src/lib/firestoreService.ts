@@ -132,6 +132,39 @@ export async function deleteLeadFromFirestore(id: string): Promise<boolean> {
     }
 }
 
+export async function getLeadFromFirestore(id: string): Promise<SimpleLead | null> {
+    const database = getDb();
+    if (!database) return null;
+
+    try {
+        const { getDoc } = await import('firebase/firestore');
+        const leadRef = doc(database, COLLECTIONS.LEADS, id);
+        const docSnap = await getDoc(leadRef);
+
+        if (!docSnap.exists()) return null;
+
+        const data = docSnap.data();
+        return {
+            id: docSnap.id,
+            name: data.name || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            company: data.company || '',
+            source: data.source || 'unknown',
+            status: data.status || 'nuevo',
+            stage: data.stage || 'lead_entrante',
+            score: data.score || 0,
+            tags: data.tags || [],
+            notes: data.notes || [],
+            createdAt: data.createdAt?.toDate() || new Date(),
+            lastActivity: data.lastActivity?.toDate() || new Date(),
+        };
+    } catch (error) {
+        console.error('Error fetching lead:', error);
+        return null;
+    }
+}
+
 // ============== FORM SUBMISSIONS ==============
 
 export interface FormSubmission {

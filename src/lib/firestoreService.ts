@@ -51,6 +51,8 @@ export interface SimpleLead {
     notes?: string[];
     createdAt?: Date;
     lastActivity?: Date;
+    appointmentDate?: string;
+    googleEventId?: string;
 }
 
 export async function getLeadsFromFirestore(): Promise<SimpleLead[]> {

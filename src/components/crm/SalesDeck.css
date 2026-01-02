@@ -1,0 +1,450 @@
+/* Sales Deck Premium Styles */
+/* Matching the Gravita Sales Deck HTML template */
+
+/* --- FUENTES PREMIUM --- */
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,800,700&display=swap');
+
+/* --- SALES DECK VARIABLES --- */
+.sales-deck-container {
+    --deck-bg: #FFFFFF;
+    --deck-text-dark: #1D1D1F;
+    --deck-text-gray: #86868B;
+    --deck-holo-gradient: linear-gradient(135deg, #22D3EE 0%, #E879F9 50%, #FBBF24 100%);
+    --deck-accent-cyan: #22D3EE;
+    --deck-radius: 24px;
+    --slide-w: 100%;
+    --slide-h: 520px;
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* --- SLIDE MASTER --- */
+.sales-deck-container .slide {
+    width: var(--slide-w);
+    height: var(--slide-h);
+    background: var(--deck-bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+    border-radius: 16px;
+}
+
+.sales-deck-container .slide-dark {
+    background: #0F172A;
+}
+
+.sales-deck-container .safe-zone {
+    width: 90%;
+    max-width: 900px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* --- DECORACIÓN BLOBS --- */
+.sales-deck-container .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.sales-deck-container .b1 {
+    top: -30%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: #A5F3FC;
+}
+
+.sales-deck-container .b2 {
+    bottom: -30%;
+    left: -10%;
+    width: 350px;
+    height: 350px;
+    background: #FBCFE8;
+}
+
+.sales-deck-container .b3 {
+    top: 30%;
+    left: 30%;
+    width: 300px;
+    height: 300px;
+    background: #FEF9C3;
+    opacity: 0.3;
+}
+
+/* --- TIPOGRAFÍA --- */
+.sales-deck-container h1 {
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0 0 15px 0;
+    text-align: center;
+    letter-spacing: -1px;
+    color: var(--deck-text-dark);
+}
+
+.sales-deck-container h2 {
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin: 0 0 20px 0;
+    text-align: center;
+    letter-spacing: -0.5px;
+    color: var(--deck-text-dark);
+}
+
+.sales-deck-container h3 {
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    margin: 0 0 8px 0;
+    color: var(--deck-text-dark);
+}
+
+.sales-deck-container p {
+    font-size: 0.9rem;
+    color: var(--deck-text-gray);
+    line-height: 1.5;
+    margin: 0 auto 15px auto;
+    text-align: center;
+    max-width: 700px;
+}
+
+.sales-deck-container .grad-text {
+    background: var(--deck-holo-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.sales-deck-container .label {
+    display: inline-block;
+    padding: 5px 14px;
+    background: #F5F5F7;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--deck-text-gray);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- GRIDS --- */
+.sales-deck-container .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.sales-deck-container .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    margin: 20px auto 0 auto;
+    align-items: stretch;
+}
+
+/* --- TARJETAS --- */
+.sales-deck-container .card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--deck-radius);
+    padding: 25px;
+    box-shadow: 0 15px 40px -12px rgba(0, 0, 0, 0.06);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+.sales-deck-container .card h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.sales-deck-container .card p {
+    text-align: left;
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.sales-deck-container .icon-box {
+    width: 40px;
+    height: 40px;
+    background: #F5F5F7;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.sales-deck-container .icon-svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--deck-text-dark);
+    stroke-width: 1.8;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* --- PRICING --- */
+.sales-deck-container .price-col {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    position: relative;
+}
+
+.sales-deck-container .price-title {
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 900;
+    margin: 5px 0;
+    color: var(--deck-text-dark);
+}
+
+.sales-deck-container .price-desc {
+    font-size: 0.75rem;
+    color: var(--deck-text-gray);
+    margin-bottom: 10px;
+}
+
+.sales-deck-container .price-num {
+    font-size: 1.75rem;
+    font-weight: 900;
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    margin: 8px 0 15px 0;
+    letter-spacing: -0.5px;
+    color: var(--deck-text-dark);
+}
+
+.sales-deck-container .features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sales-deck-container .features li {
+    text-align: left;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+    color: var(--deck-text-gray);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.sales-deck-container .check-svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--deck-accent-cyan);
+    stroke-width: 2.5;
+    fill: none;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* Black Card (Orbit) */
+.sales-deck-container .price-col.black {
+    background: #0F172A;
+    color: #fff;
+    transform: scale(1.05);
+    z-index: 10;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4);
+}
+
+.sales-deck-container .price-col.black .price-title,
+.sales-deck-container .price-col.black .price-num {
+    color: #fff;
+}
+
+.sales-deck-container .price-col.black .price-desc,
+.sales-deck-container .price-col.black .features li {
+    color: #94A3B8;
+}
+
+.sales-deck-container .price-col.black .check-svg {
+    stroke: #22D3EE;
+}
+
+.sales-deck-container .recommended-badge {
+    background: var(--deck-accent-cyan);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 100px;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 0.5px;
+}
+
+/* --- STATS --- */
+.sales-deck-container .stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+    display: block;
+}
+
+.sales-deck-container .stat-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    margin-top: 8px;
+}
+
+/* --- TESTIMONIAL --- */
+.sales-deck-container .testimonial-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    text-align: center;
+}
+
+.sales-deck-container .testimonial-quote {
+    font-style: italic;
+    color: var(--deck-text-dark);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.sales-deck-container .testimonial-author {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin: 10px 0 0 0;
+    color: var(--deck-text-gray);
+}
+
+/* --- CTA --- */
+.sales-deck-container .cta-buttons {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.sales-deck-container .cta-outline {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 18px 35px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.sales-deck-container .cta-solid {
+    background: #fff;
+    color: #000;
+    padding: 18px 35px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.sales-deck-container .brand-footer {
+    margin-top: 60px;
+    opacity: 0.5;
+    color: #fff;
+    font-family: 'Satoshi', 'Inter', sans-serif;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+}
+
+/* --- ORBIT GRAPHIC --- */
+.sales-deck-container .orbit-graphic {
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* --- FOOTER --- */
+.sales-deck-container .footer {
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+    right: 50px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    color: #94A3B8;
+    font-size: 0.65rem;
+    font-weight: 600;
+    width: calc(100% - 100px);
+    margin: 0 auto;
+}
+
+.sales-deck-container .footer-dark {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 800px) {
+    .sales-deck-container .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-deck-container .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-deck-container .price-col.black {
+        transform: scale(1);
+    }
+}
+
+/* --- PRINT STYLES --- */
+@media print {
+    .sales-deck-container .slide {
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        height: 720px !important;
+        width: 1280px !important;
+    }
+
+    @page {
+        size: 1280px 720px;
+        margin: 0;
+    }
+}

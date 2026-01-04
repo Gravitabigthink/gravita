@@ -35,6 +35,22 @@ function getDb(): Firestore | null {
     return db;
 }
 
+// Helper to safely convert Firestore Timestamp to Date
+function safeToDate(value: unknown): Date {
+    if (!value) return new Date();
+    // Check if it's a Firestore Timestamp with toDate method
+    if (typeof value === 'object' && value !== null && 'toDate' in value && typeof (value as { toDate: () => Date }).toDate === 'function') {
+        return (value as { toDate: () => Date }).toDate();
+    }
+    // Check if it's already a Date
+    if (value instanceof Date) return value;
+    // Check if it's a timestamp number
+    if (typeof value === 'number') return new Date(value);
+    // Check if it's an ISO string
+    if (typeof value === 'string') return new Date(value);
+    return new Date();
+}
+
 // ============== LEADS ==============
 
 export interface SimpleLead {
@@ -76,8 +92,8 @@ export async function getLeadsFromFirestore(): Promise<SimpleLead[]> {
             score: docSnap.data().score || 0,
             tags: docSnap.data().tags || [],
             notes: docSnap.data().notes || [],
-            createdAt: docSnap.data().createdAt?.toDate() || new Date(),
-            lastActivity: docSnap.data().lastActivity?.toDate() || new Date(),
+            createdAt: safeToDate(docSnap.data().createdAt),
+            lastActivity: safeToDate(docSnap.data().lastActivity),
         }));
     } catch (error) {
         console.error('Error fetching leads:', error);
@@ -158,8 +174,8 @@ export async function getLeadFromFirestore(id: string): Promise<SimpleLead | nul
             score: data.score || 0,
             tags: data.tags || [],
             notes: data.notes || [],
-            createdAt: data.createdAt?.toDate() || new Date(),
-            lastActivity: data.lastActivity?.toDate() || new Date(),
+            createdAt: safeToDate(data.createdAt),
+            lastActivity: safeToDate(data.lastActivity),
         };
     } catch (error) {
         console.error('Error fetching lead:', error);
@@ -278,11 +294,11 @@ export async function getAppointmentsByCalendar(calendarId: string): Promise<App
             leadName: docSnap.data().leadName || '',
             leadEmail: docSnap.data().leadEmail || '',
             leadPhone: docSnap.data().leadPhone,
-            date: docSnap.data().date?.toDate() || new Date(),
+            date: safeToDate(docSnap.data().date),
             timeSlot: docSnap.data().timeSlot || '',
             status: docSnap.data().status || 'scheduled',
             notes: docSnap.data().notes,
-            createdAt: docSnap.data().createdAt?.toDate() || new Date(),
+            createdAt: safeToDate(docSnap.data().createdAt),
         }));
     } catch (error) {
         console.error('Error fetching appointments:', error);
@@ -340,7 +356,7 @@ export async function getCRMMetricsFromFirestore(): Promise<CRMMetrics> {
                 status: (data.status as string) || 'nuevo',
                 source: (data.source as string) || 'manual',
                 potentialValue: (data.potentialValue as number) || 0,
-                createdAt: data.createdAt?.toDate() || new Date(),
+                createdAt: safeToDate(data.createdAt),
             };
         });
 

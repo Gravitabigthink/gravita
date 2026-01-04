@@ -17,12 +17,11 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
 # Get API key from: https://resend.com/api-keys
 RESEND_API_KEY=re_your_resend_api_key
 
-# WhatsApp Notifications
-# GRATIS: Usamos links wa.me (sin API)
-# OPCIONAL: Para automatización completa, configura WhatsApp Cloud API
+# WhatsApp Cloud API (Mensajería Automática)
+# Configurar en Meta for Developers → WhatsApp → API Setup
 META_VERIFY_TOKEN=gravita_sniper_crm
-META_ACCESS_TOKEN=your_whatsapp_access_token
-META_PHONE_NUMBER_ID=your_phone_number_id
+META_WHATSAPP_TOKEN=your_whatsapp_access_token
+META_PHONE_NUMBER_ID=571894626004823
 
 # Google Calendar API (Opcional)
 GOOGLE_CLIENT_ID=your_google_client_id

@@ -30,18 +30,21 @@ interface WhatsAppConfig {
 }
 
 function getConfig(): WhatsAppConfig {
-    const token = process.env.META_WHATSAPP_TOKEN || process.env.META_ACCESS_TOKEN;
+    // Check all possible token variable names
+    const token = process.env.META_WHATSAPP_TOKEN || process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN;
     const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
 
     if (!token || !phoneNumberId) {
+        console.error('WhatsApp config missing:', { hasToken: !!token, hasPhoneId: !!phoneNumberId });
         throw new Error('WhatsApp Cloud API not configured. Set META_WHATSAPP_TOKEN and META_PHONE_NUMBER_ID');
     }
 
+    console.log('WhatsApp config loaded, token starts with:', token.substring(0, 20));
     return { token, phoneNumberId };
 }
 
 export function isWhatsAppConfigured(): boolean {
-    const token = process.env.META_WHATSAPP_TOKEN || process.env.META_ACCESS_TOKEN;
+    const token = process.env.META_WHATSAPP_TOKEN || process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN;
     const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
     return !!(token && phoneNumberId);
 }

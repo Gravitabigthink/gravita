@@ -105,6 +105,8 @@ export async function POST(request: NextRequest) {
             }
 
             console.log('📱 WhatsApp:', msg.fromName, '-', messageText.substring(0, 50));
+            console.log('📞 Número entrante (msg.from):', msg.from);
+            console.log('📞 Longitud del número:', msg.from.length);
 
             // Mark as read immediately
             await markMessageAsRead(msg.from);
@@ -218,10 +220,11 @@ export async function POST(request: NextRequest) {
             }
 
             // Send response via WhatsApp
+            console.log('📤 Intentando enviar respuesta a:', msg.from);
             const sendResult = await sendWhatsAppMessage(msg.from, aiResponse);
 
             if (sendResult.success) {
-                console.log('✅ Respuesta enviada');
+                console.log('✅ Respuesta enviada a:', msg.from);
 
                 // Add response to history
                 history.push({
@@ -233,7 +236,8 @@ export async function POST(request: NextRequest) {
                 // Update conversation store
                 conversationStore.set(msg.from, history.slice(-20)); // Keep last 20 messages
             } else {
-                console.error('❌ Error enviando respuesta:', sendResult.error);
+                console.error('❌ Error enviando respuesta a:', msg.from);
+                console.error('❌ Error completo:', JSON.stringify(sendResult));
             }
 
             // Update lead activity and score

@@ -2,27 +2,39 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Test WhatsApp API credentials
 export async function GET(request: NextRequest) {
-    const token = process.env.META_WHATSAPP_TOKEN || process.env.META_ACCESS_TOKEN;
+    // Check ALL possible token variable names
+    const token1 = process.env.META_WHATSAPP_TOKEN;
+    const token2 = process.env.WHATSAPP_ACCESS_TOKEN;
+    const token3 = process.env.META_ACCESS_TOKEN;
+
+    const token = token1 || token2 || token3;
     const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
 
     console.log('=== WhatsApp API Test ===');
-    console.log('Token exists:', !!token);
+    console.log('META_WHATSAPP_TOKEN exists:', !!token1);
+    console.log('WHATSAPP_ACCESS_TOKEN exists:', !!token2);
+    console.log('META_ACCESS_TOKEN exists:', !!token3);
+    console.log('Using token from:', token1 ? 'META_WHATSAPP_TOKEN' : token2 ? 'WHATSAPP_ACCESS_TOKEN' : token3 ? 'META_ACCESS_TOKEN' : 'NONE');
     console.log('Token length:', token?.length || 0);
-    console.log('Token first 20 chars:', token?.substring(0, 20));
+    console.log('Token first 30 chars:', token?.substring(0, 30));
+    console.log('Token last 20 chars:', token?.slice(-20));
     console.log('Phone Number ID:', phoneNumberId);
 
     if (!token || !phoneNumberId) {
         return NextResponse.json({
             configured: false,
             error: 'Missing credentials',
-            hasToken: !!token,
-            hasPhoneId: !!phoneNumberId
+            hasToken1: !!token1,
+            hasToken2: !!token2,
+            hasToken3: !!token3,
+            hasPhoneId: !!phoneNumberId,
+            phoneNumberId
         });
     }
 
     // Test the API with a simple request to check if credentials are valid
     try {
-        const testUrl = `https://graph.facebook.com/v18.0/${phoneNumberId}`;
+        const testUrl = `https://graph.facebook.com/v24.0/${phoneNumberId}`;
         console.log('Testing URL:', testUrl);
 
         const response = await fetch(testUrl, {
@@ -39,6 +51,8 @@ export async function GET(request: NextRequest) {
                 configured: true,
                 valid: true,
                 phoneNumberId,
+                tokenSource: token1 ? 'META_WHATSAPP_TOKEN' : token2 ? 'WHATSAPP_ACCESS_TOKEN' : 'META_ACCESS_TOKEN',
+                tokenPrefix: token.substring(0, 20),
                 data
             });
         } else {
@@ -46,7 +60,9 @@ export async function GET(request: NextRequest) {
                 configured: true,
                 valid: false,
                 error: data.error,
-                phoneNumberId
+                phoneNumberId,
+                tokenSource: token1 ? 'META_WHATSAPP_TOKEN' : token2 ? 'WHATSAPP_ACCESS_TOKEN' : 'META_ACCESS_TOKEN',
+                tokenPrefix: token.substring(0, 20)
             });
         }
     } catch (error) {

@@ -54,7 +54,58 @@ export function isWhatsAppConfigured(): boolean {
 // =============================================================================
 
 /**
+ * Send a template message via WhatsApp (works in sandbox mode)
+ */
+export async function sendWhatsAppTemplate(
+    to: string,
+    templateName: string = 'hello_world',
+    languageCode: string = 'en_US'
+): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    try {
+        const config = getConfig();
+        const cleanPhone = to.replace(/[^0-9]/g, '');
+
+        console.log('📋 Sending WhatsApp TEMPLATE to:', cleanPhone);
+
+        const response = await fetch(
+            `${WHATSAPP_API_URL}/${config.phoneNumberId}/messages`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${config.token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messaging_product: 'whatsapp',
+                    to: cleanPhone,
+                    type: 'template',
+                    template: {
+                        name: templateName,
+                        language: {
+                            code: languageCode
+                        }
+                    }
+                }),
+            }
+        );
+
+        const data = await response.json();
+        console.log('📋 Template response:', JSON.stringify(data));
+
+        if (response.ok && data.messages?.[0]?.id) {
+            return { success: true, messageId: data.messages[0].id };
+        } else {
+            return { success: false, error: data.error?.message || 'Template send failed' };
+        }
+    } catch (error) {
+        console.error('Template send error:', error);
+        return { success: false, error: String(error) };
+    }
+}
+
+/**
  * Send a text message via WhatsApp
+ * If text fails with #131030 error, falls back to template
  */
 export async function sendWhatsAppMessage(
     to: string,
@@ -63,8 +114,8 @@ export async function sendWhatsAppMessage(
     try {
         const config = getConfig();
 
-        // Clean phone number (remove +, spaces, etc.)
-        const cleanPhone = to.replace(/[\s\-\(\)\+]/g, '');
+        // Clean phone number (remove all non-numeric characters)
+        const cleanPhone = to.replace(/[^0-9]/g, '');
 
         console.log('📞 Sending WhatsApp message to:', cleanPhone);
         console.log('📞 Original number:', to);
@@ -92,12 +143,30 @@ export async function sendWhatsAppMessage(
         );
 
         const data = await response.json();
+        console.log('📞 Response status:', response.status);
+        console.log('📞 Response data:', JSON.stringify(data));
 
         if (response.ok && data.messages?.[0]?.id) {
             return { success: true, messageId: data.messages[0].id };
         } else {
+            // Check if it's the sandbox restriction error
+            const errorMessage = data.error?.message || 'Unknown error';
+            const errorCode = data.error?.code;
+
             console.error('WhatsApp API error:', data);
-            return { success: false, error: data.error?.message || 'Unknown error' };
+            console.error('Error code:', errorCode, 'Message:', errorMessage);
+
+            // If sandbox restriction, try sending a template instead
+            if (errorMessage.includes('#131030') || errorMessage.includes('not in allowed list')) {
+                console.log('🔄 Text message blocked, trying template fallback...');
+                const templateResult = await sendWhatsAppTemplate(to);
+                if (templateResult.success) {
+                    console.log('✅ Template fallback succeeded!');
+                    return templateResult;
+                }
+            }
+
+            return { success: false, error: errorMessage };
         }
     } catch (error) {
         console.error('WhatsApp send error:', error);

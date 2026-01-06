@@ -78,49 +78,70 @@ export async function GET(request: NextRequest) {
 // Send a test message
 export async function POST(request: NextRequest) {
     try {
-        const { testPhone } = await request.json();
+        const body = await request.json();
+        const testPhone = body.testPhone || '524921243272'; // Default to user's number
 
-        const token = process.env.META_WHATSAPP_TOKEN || process.env.META_ACCESS_TOKEN;
+        // Use the same token logic as GET
+        const token1 = process.env.META_WHATSAPP_TOKEN;
+        const token2 = process.env.WHATSAPP_ACCESS_TOKEN;
+        const token3 = process.env.META_ACCESS_TOKEN;
+        const token = token1 || token2 || token3;
+
         const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
 
         if (!token || !phoneNumberId) {
-            return NextResponse.json({ error: 'Not configured' }, { status: 500 });
+            return NextResponse.json({
+                error: 'Not configured',
+                hasToken1: !!token1,
+                hasToken2: !!token2,
+                hasToken3: !!token3,
+                hasPhoneId: !!phoneNumberId
+            }, { status: 500 });
         }
 
-        // Clean phone
-        const cleanPhone = testPhone.replace(/[\s\-\(\)\+]/g, '');
+        // Clean phone - remove all non-numeric characters
+        const cleanPhone = testPhone.replace(/[^0-9]/g, '');
 
         console.log('=== Sending Test Message ===');
-        console.log('To phone:', cleanPhone);
+        console.log('Original phone:', testPhone);
+        console.log('Clean phone:', cleanPhone);
         console.log('Using phone ID:', phoneNumberId);
+        console.log('Token source:', token1 ? 'META_WHATSAPP_TOKEN' : token2 ? 'WHATSAPP_ACCESS_TOKEN' : 'META_ACCESS_TOKEN');
+        console.log('Token prefix:', token.substring(0, 30));
 
-        const response = await fetch(
-            `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
-            {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    messaging_product: 'whatsapp',
-                    recipient_type: 'individual',
-                    to: cleanPhone,
-                    type: 'text',
-                    text: {
-                        preview_url: false,
-                        body: '🧪 Mensaje de prueba desde GRAVITA CRM - ' + new Date().toLocaleTimeString(),
-                    },
-                }),
-            }
-        );
+        const apiUrl = `https://graph.facebook.com/v24.0/${phoneNumberId}/messages`;
+        console.log('API URL:', apiUrl);
+
+        const requestBody = {
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: cleanPhone,
+            type: 'text',
+            text: {
+                preview_url: false,
+                body: '🧪 Test desde GRAVITA CRM - ' + new Date().toLocaleTimeString(),
+            },
+        };
+        console.log('Request body:', JSON.stringify(requestBody));
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
 
         const data = await response.json();
-        console.log('Send Response:', JSON.stringify(data));
+        console.log('Send Response status:', response.status);
+        console.log('Send Response data:', JSON.stringify(data));
 
         return NextResponse.json({
             success: response.ok,
             status: response.status,
+            phoneSentTo: cleanPhone,
+            tokenUsed: token.substring(0, 20) + '...',
             data
         });
     } catch (error) {

@@ -58,13 +58,27 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        const payload: WhatsAppWebhookPayload = await request.json();
+        const rawBody = await request.text();
+        console.log('📨 WhatsApp Webhook received raw payload:', rawBody.substring(0, 500));
+
+        const payload: WhatsAppWebhookPayload = JSON.parse(rawBody);
+        console.log('📦 Parsed payload object type:', payload.object);
+        console.log('📦 Payload entries count:', payload.entry?.length || 0);
+
+        if (payload.entry?.[0]?.changes?.[0]?.value) {
+            const value = payload.entry[0].changes[0].value;
+            console.log('📦 Has messages:', !!value.messages, 'Count:', value.messages?.length || 0);
+            console.log('📦 Has statuses:', !!value.statuses, 'Count:', value.statuses?.length || 0);
+            console.log('📦 Has contacts:', !!value.contacts, 'Count:', value.contacts?.length || 0);
+        }
 
         if (payload.object !== 'whatsapp_business_account') {
+            console.log('⚠️ Ignoring non-WhatsApp payload, object type:', payload.object);
             return NextResponse.json({ status: 'ignored' });
         }
 
         const { messages, statuses } = parseWhatsAppWebhook(payload);
+        console.log('📱 Parsed messages:', messages.length, 'Parsed statuses:', statuses.length);
 
         // Process each incoming message
         for (const msg of messages) {

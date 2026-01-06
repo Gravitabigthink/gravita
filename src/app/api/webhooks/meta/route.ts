@@ -52,10 +52,22 @@ export async function GET(request: NextRequest) {
 // Recibir leads (POST)
 export async function POST(request: NextRequest) {
     try {
-        const payload: MetaLeadPayload = await request.json();
+        const rawBody = await request.text();
+        console.log('📨 META Webhook received raw payload:', rawBody.substring(0, 500));
+
+        const payload = JSON.parse(rawBody);
+        console.log('📦 META Payload object type:', payload.object);
+
+        // Check if this is a WhatsApp message being sent to the wrong endpoint
+        if (payload.object === 'whatsapp_business_account') {
+            console.log('⚠️ WARNING: WhatsApp message received at /meta endpoint! Should go to /whatsapp');
+            console.log('⚠️ Payload:', JSON.stringify(payload).substring(0, 1000));
+            // Don't return early - let's log but continue for debugging
+        }
 
         if (payload.object !== 'page') {
-            return NextResponse.json({ error: 'Invalid object type' }, { status: 400 });
+            console.log('📦 Object type is not "page":', payload.object);
+            return NextResponse.json({ error: 'Invalid object type', received: payload.object }, { status: 400 });
         }
 
         // Procesar cada entrada

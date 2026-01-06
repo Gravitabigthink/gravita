@@ -22,7 +22,7 @@ import { es } from 'date-fns/locale';
 // META_PHONE_NUMBER_ID - Your registered phone number ID
 // META_WHATSAPP_BUSINESS_ID - Your WhatsApp Business Account ID
 
-const WHATSAPP_API_URL = 'https://graph.facebook.com/v18.0';
+const WHATSAPP_API_URL = 'https://graph.facebook.com/v24.0';
 
 interface WhatsAppConfig {
     token: string;
@@ -65,6 +65,10 @@ export async function sendWhatsAppMessage(
 
         // Clean phone number (remove +, spaces, etc.)
         const cleanPhone = to.replace(/[\s\-\(\)\+]/g, '');
+
+        console.log('📞 Sending WhatsApp message to:', cleanPhone);
+        console.log('📞 Original number:', to);
+        console.log('📞 Using phone number ID:', config.phoneNumberId);
 
         const response = await fetch(
             `${WHATSAPP_API_URL}/${config.phoneNumberId}/messages`,

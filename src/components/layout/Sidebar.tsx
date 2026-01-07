@@ -47,16 +47,18 @@ const navSections: NavSection[] = [
             { href: '/crm/calendario', label: 'Calendario', icon: <Calendar size={18} strokeWidth={1.5} /> },
             { href: '/crm/cotizaciones', label: 'Cotizaciones', icon: <FileText size={18} strokeWidth={1.5} /> },
             { href: '/crm/formularios', label: 'Formularios', icon: <ClipboardList size={18} strokeWidth={1.5} /> },
+            { href: '/crm/ia-hub', label: 'IA Hub', icon: <Brain size={18} strokeWidth={1.5} /> },
         ],
     },
     {
-        id: 'ia-hub',
-        label: 'IA Hub',
+        id: 'the-factory',
+        label: 'The Factory',
         icon: <Brain size={18} strokeWidth={1.5} />,
         isMain: true,
         items: [
-            { href: '/crm/ia-hub', label: 'Centro de Control', icon: <Brain size={18} strokeWidth={1.5} /> },
-            { href: '/crm/the-factory', label: 'The Factory', icon: <Target size={18} strokeWidth={1.5} /> },
+            { href: '/factory', label: 'Nueva Estrategia', icon: <Target size={18} strokeWidth={1.5} /> },
+            { href: '/factory/estrategias', label: 'Estrategias', icon: <FileText size={18} strokeWidth={1.5} /> },
+            { href: '/factory/contenido', label: 'Contenido', icon: <ClipboardList size={18} strokeWidth={1.5} /> },
         ],
     },
 ];

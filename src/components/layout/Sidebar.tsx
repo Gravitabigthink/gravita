@@ -56,6 +56,7 @@ const navSections: NavSection[] = [
         isMain: true,
         items: [
             { href: '/crm/ia-hub', label: 'Centro de Control', icon: <Brain size={18} strokeWidth={1.5} /> },
+            { href: '/crm/the-factory', label: 'The Factory', icon: <Target size={18} strokeWidth={1.5} /> },
         ],
     },
 ];
